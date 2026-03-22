@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Iruna Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #080c10;
+  --bg2:       #0d1117;
+  --bg3:       #111820;
+  --panel:     #0d1520;
+  --border:    rgba(0,180,255,0.2);
+  --border2:   rgba(0,200,255,0.45);
+  --neon:      #00c8ff;
+  --neon-dim:  rgba(0,200,255,0.5);
+  --neon-glow: 0 0 8px rgba(0,200,255,0.6), 0 0 20px rgba(0,200,255,0.2);
+  --neon-glow-sm: 0 0 6px rgba(0,200,255,0.4);
+  --text:      #ffffff;
+  --text-dim:  rgba(255,255,255,0.6);
+  --text-muted:rgba(255,255,255,0.3);
+  --purple:    #a78bff;
+  --teal:      #00ffcc;
+  --amber:     #ffaa00;
+  --red:       #ff4060;
+  --header-h:  42px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  min-height:100vh;
+  padding:0;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,150,255,0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(0,100,200,0.04) 0%, transparent 60%);
+}
+
+/* TOP BAR */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(8,12,16,0.95);
+  border-bottom: 1px solid var(--border2);
+  padding: 0 10px;
+  height: var(--header-h);
+  position: sticky; top:0; z-index:100;
+  box-shadow: 0 1px 0 rgba(0,200,255,0.15), 0 4px 20px rgba(0,0,0,0.8);
+}
+.topbar-title{
+  font-size:11px; font-weight:700; letter-spacing:0.12em;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  flex:1; text-align:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  padding:0 6px;
+}
+.tab-pill{ display:flex; gap:4px; flex-shrink:0; }
+.tab-pill button{
+  padding: 5px 10px;
+  font-family:'Cinzel',serif; font-size:10px; font-weight:600; letter-spacing:0.05em;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+  cursor:pointer;
+  transition: all 0.15s;
+  white-space:nowrap;
+}
+.tab-pill button.active{
+  background: rgba(0,200,255,0.08);
+  border-color: var(--neon);
+  color: var(--neon);
+  box-shadow: var(--neon-glow-sm);
+}
+.tab-pill button:hover:not(.active){ border-color:var(--border2); color:var(--text-dim); }
+
+/* MAIN */
+.main{ max-width:540px; margin:0 auto; padding:12px 10px 50px; }
+.section{ display:none; }
+.section.active{ display:block; }
+
+/* PANEL */
+.panel{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow:hidden;
+  position:relative;
+  box-shadow: 0 0 0 1px rgba(0,200,255,0.04), 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(0,200,255,0.06);
+}
+.panel-header{
+  background: rgba(0,200,255,0.05);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  font-size:11px; letter-spacing:0.14em; color: var(--neon);
+  text-align:center;
+  text-shadow: var(--neon-glow-sm);
+}
+
+/* ROW */
+.row{
+  display:flex; align-items:center;
+  border-bottom: 1px solid rgba(0,200,255,0.08);
+  min-height:44px;
+}
+.row:last-child{ border-bottom:none; }
+.row-label{
+  width:130px; flex-shrink:0;
+  padding: 8px 14px;
+  font-size:11px; color:var(--text-dim); letter-spacing:0.07em;
+  border-right: 1px solid rgba(0,200,255,0.08);
+}
+.row-input{
+  flex:1; padding:7px 10px;
+  font-family:'Share Tech Mono',monospace; font-size:15px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(0,200,255,0.2);
+  border-radius:3px;
+  color: #fff;
+  outline:none;
+  margin: 6px 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.row-input:focus{ border-color:var(--neon); box-shadow: var(--neon-glow-sm); }
+.row-input::placeholder{ color:var(--text-muted); font-size:12px; font-family:'Cinzel',serif; }
+
+/* TRIANGLE BUTTONS */
+.tri-btn{
+  width:30px; height:30px; flex-shrink:0;
+  background: rgba(0,200,255,0.08);
+  border: 1px solid var(--border2);
+  border-radius:3px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 3px;
+  transition: all 0.1s;
+  box-shadow: var(--neon-glow-sm);
+}
+.tri-btn:hover{ background:rgba(0,200,255,0.18); box-shadow:var(--neon-glow); }
+.tri-btn:active{ transform:scale(0.91); }
+.tri-btn::after{ content:''; display:block; border-style:solid; }
+.tri-btn.left::after{ border-width:6px 9px 6px 0; border-color:transparent var(--neon) transparent transparent; }
+.tri-btn.right::after{ border-width:6px 0 6px 9px; border-color:transparent transparent transparent var(--neon); }
+.val-display{
+  min-width:52px; text-align:center;
+  font-family:'Share Tech Mono',monospace; font-size:14px; color:var(--neon);
+  text-shadow: var(--neon-glow-sm);
+}
+
+/* STATS */
+.stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:10px; }
+.stat-row.two{ grid-template-columns:repeat(2,1fr); }
+.stat-box{
+  background: rgba(0,200,255,0.04);
+  border:1px solid var(--border);
+  border-radius:4px; padding:10px 6px; text-align:center;
+  box-shadow: 0 0 12px rgba(0,200,255,0.08), inset 0 1px 0 rgba(0,200,255,0.06);
+}
+.stat-n{ font-family:'Share Tech Mono',monospace; font-size:15px; color:#fff; line-height:1.2; text-shadow: var(--neon-glow-sm); }
+.stat-n.sm{ font-size:11px; }
+.stat-l{ font-size:10px; color:var(--text-muted); margin-top:3px; line-height:1.3; letter-spacing:0.04em; }
+
+/* BARS */
+.bar-section{ padding:10px 14px 8px; }
+.bar-section+.bar-section{ border-top:1px solid rgba(0,200,255,0.08); }
+.bar-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+.bar-lbl{ font-size:11px; color:var(--text-dim); letter-spacing:0.04em; }
+.bar-pct{ font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--text-muted); }
+.done-tag{ font-size:10px; color:var(--teal); letter-spacing:0.06em; background:rgba(0,255,204,0.08); border:1px solid rgba(0,255,204,0.3); border-radius:2px; padding:1px 6px; text-shadow:0 0 6px rgba(0,255,204,0.5); }
+.bar-track{ height:5px; background:rgba(0,0,0,0.5); border:1px solid rgba(0,200,255,0.12); border-radius:3px; overflow:hidden; margin-bottom:5px; }
+.bar-fill{ height:100%; border-radius:3px; transition:width 0.6s cubic-bezier(.4,0,.2,1); }
+.fill-purple{ background:var(--purple); box-shadow:0 0 6px rgba(167,139,255,0.6); }
+.fill-amber{ background:var(--amber); box-shadow:0 0 6px rgba(255,170,0,0.5); }
+.bar-away{ font-size:10px; color:var(--text-muted); font-style:italic; margin-bottom:6px; }
+
+/* PROGRESS */
+.prog-row{ padding:8px 14px 12px; border-top:1px solid rgba(0,200,255,0.08); }
+.prog-top{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:5px; }
+
+/* QUEST */
+.q-next{ display:flex; gap:8px; align-items:flex-start; padding:8px 14px; border-top:1px solid rgba(0,200,255,0.08); }
+.q-next-arrow{ color:var(--neon-dim); font-size:14px; margin-top:1px; }
+.q-next-lbl{ font-size:10px; color:var(--text-muted); display:block; margin-bottom:2px; letter-spacing:0.06em; }
+.q-next-name{ font-size:13px; color:var(--text-dim); }
+.ep-badge{ font-size:10px; color:var(--neon-dim); background:rgba(0,200,255,0.08); border:1px solid var(--border); border-radius:2px; padding:1px 5px; margin-left:5px; }
+
+/* SEARCH */
+.search-wrap{ display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid rgba(0,200,255,0.08); }
+.search-input{
+  flex:1; padding:8px 12px;
+  font-family:'Cinzel',serif; font-size:12px;
+  background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:3px; color:#fff; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.search-input:focus{ border-color:var(--neon); box-shadow:var(--neon-glow-sm); }
+.search-input::placeholder{ color:var(--text-muted); }
+.track-btn{
+  padding:8px 14px;
+  font-family:'Cinzel',serif; font-size:10px; font-weight:700; letter-spacing:0.08em;
+  background: rgba(0,200,255,0.08);
+  border:1px solid var(--border2); border-radius:3px;
+  color:var(--neon); cursor:pointer; white-space:nowrap;
+  transition:all 0.15s; flex-shrink:0;
+  box-shadow: var(--neon-glow-sm);
+}
+.track-btn:hover{ background:rgba(0,200,255,0.16); box-shadow:var(--neon-glow); }
+.track-btn:active{ transform:scale(0.97); }
+.suggestions{
+  display:none; background:var(--bg3);
+  border:1px solid var(--border2); border-top:none;
+  border-radius:0 0 4px 4px; overflow:hidden; margin:0 0 8px;
+}
+.sug-item{
+  padding:8px 14px; font-size:12px; cursor:pointer;
+  color:var(--text-dim); border-bottom:1px solid rgba(0,200,255,0.08);
+  display:flex; justify-content:space-between; align-items:center;
+  transition:background 0.12s;
+}
+.sug-item:last-child{ border-bottom:none; }
+.sug-item:hover{ background:rgba(0,200,255,0.06); color:#fff; }
+
+.not-found{ font-size:13px; color:var(--text-muted); font-style:italic; text-align:center; padding:1.5rem 0; }
+.error-msg{ font-size:11px; color:var(--red); padding:4px 14px 8px; letter-spacing:0.04em; }
+.result-hidden{ display:none; }
+
+/* Quest list */
+.ep-group{ margin-bottom:10px; }
+.ep-group-header{
+  font-size:11px; letter-spacing:0.14em; color:var(--neon);
+  text-shadow:var(--neon-glow-sm);
+  padding:7px 14px;
+  background:rgba(0,200,255,0.05);
+  border:1px solid var(--border);
+  border-radius:6px 6px 0 0;
+  border-bottom:none;
+  user-select:none;
+}
+.ep-group-header:hover{ background:rgba(0,200,255,0.09); }
+.ep-quests .quest-item:last-child{ border-radius:0 0 6px 6px; }
+.quest-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:none;
+  cursor:pointer;
+  transition:background 0.12s;
+  font-size:12px; color:var(--text-dim);
+  letter-spacing:0.03em;
+}
+.quest-item:last-child{ border-radius:0 0 6px 6px; }
+.quest-item:hover{ background:rgba(0,200,255,0.06); color:#fff; }
+.quest-item.selected{ background:rgba(0,200,255,0.1); color:var(--neon); border-color:var(--border2); }
+.quest-num{
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  color:var(--text-muted); min-width:22px; flex-shrink:0;
+}
+.quest-objectives{
+  background:rgba(0,0,0,0.25);
+  border-top:1px solid rgba(0,200,255,0.08);
+  padding:8px 14px 10px 36px;
+  display:none;
+}
+.quest-objectives.open{ display:block; }
+.quest-obj-step{
+  font-size:12px; color:var(--text-dim);
+  padding:3px 0;
+  display:flex; gap:8px; align-items:flex-start;
+  border-bottom:1px solid rgba(0,200,255,0.05);
+  line-height:1.4;
+}
+.quest-obj-step:last-child{ border-bottom:none; }
+.quest-obj-dot{ color:var(--neon-dim); flex-shrink:0; font-size:10px; margin-top:3px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tab-pill">
+    <button class="active" onclick="switchTab('quest')">QUESTS</button>
+    <button onclick="switchTab('grind')">GRIND</button>
+  </div>
+  <div class="topbar-title">IRUNA COMPANION</div>
+  <div style="width:120px"></div>
+</div>
+
+<div class="main">
+
+  <!-- QUEST SECTION -->
+  <div class="section active" id="section-quest">
+    <!-- Search panel -->
+    <div class="panel">
+      <div class="panel-header">MAIN QUEST TRACKER</div>
+      <div style="padding:8px 10px 4px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:6px">
+          <input class="search-input" id="qNameInput" placeholder="Search by quest name..." oninput="filterQuests()"/>
+        </div>
+        <div style="display:flex;gap:6px;padding-bottom:6px">
+          <select id="qEpFilter" onchange="filterQuests()" style="flex:1;padding:8px 10px;font-family:'Cinzel',serif;font-size:11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:3px;color:var(--text);outline:none;letter-spacing:0.05em">
+            <option value="">All Episodes</option>
+            <option value="1">Episode 1</option>
+            <option value="2">Episode 2</option>
+            <option value="3">Episode 3</option>
+            <option value="4">Episode 4</option>
+            <option value="5">Episode 5</option>
+            <option value="6">Episode 6</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress result (shown when quest selected) -->
+    <div id="qResult"></div>
+
+    <!-- Milestones (always visible) -->
+    <div class="panel" id="milestonesPanel">
+      <div class="panel-header">MILESTONES</div>
+      <div class="bar-section" id="milestoneContent">
+        <div style="font-size:12px;color:var(--text-muted);font-style:italic;text-align:center;padding:6px 0">Select a quest to track milestones</div>
+      </div>
+    </div>
+
+    <!-- Quest list -->
+    <div id="questList"></div>
+  </div>
+
+  <!-- GRIND SECTION -->
+  <div class="section" id="section-grind">
+
+    <div class="panel">
+      <div class="panel-header">MOB EXP TRACKER</div>
+      <div class="row">
+        <div class="row-label">Mob Name</div>
+        <input class="row-input" type="text" id="mobName" placeholder="e.g. High Orc" oninput="saveMob()"/>
+      </div>
+      <div class="row">
+        <div class="row-label">EXP per Kill</div>
+        <input class="row-input" type="number" id="mobExp" min="1" placeholder="e.g. 45000" oninput="saveMob()"/>
+      </div>
+      <div class="row">
+        <div class="row-label">Kills / Min</div>
+        <div style="display:flex;align-items:center;flex:1;padding:0 8px;gap:5px">
+          <button class="tri-btn left" onclick="nudgeKpm(-1)"></button>
+          <div class="val-display" id="kpmDisplay">0</div>
+          <button class="tri-btn right" onclick="nudgeKpm(1)"></button>
+          <input type="hidden" id="killsPerMin" value="0"/>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="grindResult" class="result-hidden">
+      <div class="panel">
+        <div class="panel-header" id="grindMobHeader">RESULTS</div>
+        <div style="padding:14px 14px 10px;text-align:center;border-bottom:1px solid rgba(0,200,255,0.08)">
+          <div style="font-size:10px;letter-spacing:0.12em;color:var(--text-muted);margin-bottom:6px">EXP PER MINUTE</div>
+          <div id="expPerMin" style="font-family:'Share Tech Mono',monospace;font-size:28px;color:#fff;text-shadow:var(--neon-glow);line-height:1"></div>
+        </div>
+        <div class="stat-row" style="grid-template-columns:repeat(2,1fr)">
+          <div class="stat-box"><div class="stat-n" id="expPerHour"></div><div class="stat-l">EXP / HOUR</div></div>
+          <div class="stat-box"><div class="stat-n" id="expPerDay"></div><div class="stat-l">EXP / DAY (8H)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved mobs -->
+    <div class="panel" id="savedMobsPanel" style="display:none">
+      <div class="panel-header">SAVED MOBS</div>
+      <div id="savedMobsList"></div>
+    </div>
+
+    <div style="text-align:center;padding:16px 10px 4px">
+      <p style="font-size:11px;color:var(--text-muted);font-family:'Share Tech Mono',monospace;line-height:1.6">No verified EXP-per-level table exists for Iruna beyond lv200.<br>Use your in-game EXP bar to track progress to next level.</p>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function switchTab(t){
+  const tabs=['quest','grind'];
+  document.querySelectorAll('.tab-pill button').forEach((b,i)=>b.classList.toggle('active',tabs[i]===t));
+  tabs.forEach(id=>document.getElementById('section-'+id).classList.toggle('active',id===t));
+  if(t==='grind') renderSavedMobs();
+}
+
+function fmt(n){return Math.round(n).toLocaleString();}
+
+const QUESTS=[
+{ep:1,name:"The Goddess's Chalice",idx:0},{ep:1,name:"Dark Rumors",idx:1},{ep:1,name:"Monster Taskforce",idx:2},{ep:1,name:"Supply Route Shadows",idx:3},{ep:1,name:"Shadows in the Forest",idx:4},{ep:1,name:"Mine Disaster",idx:5},{ep:1,name:"Goddess Statue at the Mine",idx:6},{ep:1,name:"Forgotten Shadow",idx:7},{ep:1,name:"Unclaimed Crest",idx:8},{ep:1,name:"Formless Being",idx:9},{ep:1,name:"Ancient Writings",idx:10},{ep:1,name:"The Place of Darkness",idx:11},{ep:1,name:"Obstructing the Alliance",idx:12},{ep:1,name:"Fire Dragon Labyrinth",idx:13},{ep:1,name:"Ancient Chalice",idx:14},{ep:1,name:"Encroaching Darkness",idx:15},{ep:1,name:"Battling the Dragon Lord",idx:16},{ep:1,name:"The Dark Domain",idx:17},{ep:1,name:"A Witch's Honor",idx:18},{ep:1,name:"The Goddess of Darkness and the General",idx:19},{ep:1,name:"The Fallen Angel's Tears",idx:20},{ep:1,name:"The Two Councils",idx:21},{ep:1,name:"In the Shadow of the Capital",idx:22},{ep:1,name:"Wetlands Battle",idx:23},{ep:1,name:"Hole Lot of Wind",idx:24},{ep:1,name:"Two Tales",idx:25},{ep:1,name:"Little Robber Girl's Tears",idx:26},{ep:1,name:"Sea of Intrigue",idx:27},{ep:1,name:"Fort of Intrigue",idx:28},{ep:1,name:"Highway of the Devil Plants",idx:29},{ep:1,name:"The Burning Flatlands",idx:30},{ep:1,name:"The Great Tree and The Dragon",idx:31},{ep:1,name:"The Disappearing Lake",idx:32},{ep:1,name:"Dust Cloud Dreams",idx:33},{ep:1,name:"From Ice to Water",idx:34},{ep:1,name:"Highland Camp",idx:35},{ep:1,name:"Awaiting Orders",idx:36},{ep:1,name:"To a New Future",idx:37},{ep:1,name:"The Mystery Deepens",idx:38},{ep:1,name:"The Toils of War",idx:39},{ep:1,name:"The Inje Idol",idx:40},{ep:1,name:"Slebenian Shadow",idx:41},{ep:1,name:"Holy Child",idx:42},{ep:1,name:"God-Killing Trap",idx:43},{ep:1,name:"Chain Crisis",idx:44},{ep:1,name:"Hot Sand, Fierce Fight",idx:45},{ep:1,name:"Sinister Scheme Setback",idx:46},{ep:1,name:"Teaus Reconciliation",idx:47},{ep:1,name:"Victory at Zalsim",idx:48},{ep:1,name:"Scaling the Dark Mountains",idx:49},{ep:1,name:"Peculiar Place",idx:50},{ep:1,name:"The Labyrinth of Leaves",idx:51},{ep:1,name:"Frenzied Fight in the Former City",idx:52},{ep:1,name:"Treetop Metropolis",idx:53},{ep:1,name:"Palatial Trail",idx:54},{ep:1,name:"Reconciliation of the Gods",idx:55},{ep:1,name:"Background to a Blunder",idx:56},{ep:1,name:"The Old Man and His Research",idx:57},{ep:1,name:"Father and Daughter at Odds",idx:58},{ep:1,name:"To the Source of Strife",idx:59},{ep:1,name:"Water People Samurai",idx:60},{ep:1,name:"Gated God",idx:61},{ep:1,name:"The Minase and the Sanki",idx:62},{ep:1,name:"Masked Temple",idx:63},{ep:1,name:"Divine Sword",idx:64},{ep:1,name:"Deserted Village",idx:65},{ep:1,name:"To Slebinia",idx:66},{ep:1,name:"Defiant Harbor",idx:67},{ep:1,name:"The Unjust Jail",idx:68},{ep:1,name:"Village Lockdown",idx:69},{ep:1,name:"Community in Crisis",idx:70},{ep:1,name:"Mine Partisans",idx:71},{ep:1,name:"Highland Devastation",idx:72},{ep:1,name:"A Crushing Blow to Evil",idx:73},{ep:1,name:"The Power that Starves",idx:74},{ep:1,name:"Collapsed Plains",idx:75},{ep:1,name:"Wicked Ambition",idx:76},{ep:1,name:"Fort of Chaos",idx:77},{ep:1,name:"Vestiges of Darkness",idx:78},{ep:1,name:"The Mournful Empress",idx:79},{ep:1,name:"The Final Battle, and...",idx:80},{ep:1,name:"Beyond the Adventure",idx:81},
+{ep:2,name:"A Sudden Start",idx:0},{ep:2,name:"The Dragonewt Realm: Bleudraf",idx:1},{ep:2,name:"The God of Justice's Lament",idx:2},{ep:2,name:"Blighted Village",idx:3},{ep:2,name:"Mutant Dragonewts",idx:4},{ep:2,name:"Dragonewt Feedlot",idx:5},{ep:2,name:"The Lograth Rebellion",idx:6},{ep:2,name:"City of Survivors",idx:7},{ep:2,name:"The End of Ambition",idx:8},{ep:2,name:"The Disappearing Gods",idx:9},{ep:2,name:"The Overworld",idx:10},{ep:2,name:"Other World Dragon",idx:11},{ep:2,name:"The Dragonewt Priests",idx:12},{ep:2,name:"The Dragonewts' Secret",idx:13},{ep:2,name:"An Unexpected Encounter",idx:14},{ep:2,name:"The Brothers Kidnapped",idx:15},{ep:2,name:"The Dragon Emperor's Palace",idx:16},{ep:2,name:"Niapa's Nefarious Plan",idx:17},{ep:2,name:"Demons, Gods and Emperors",idx:18},{ep:2,name:"Noieverre, The New World",idx:19},{ep:2,name:"The Road to Xeltzam",idx:20},{ep:2,name:"Mutated Predators",idx:21},{ep:2,name:"The Shrine of Geyanetiel",idx:22},{ep:2,name:"Mindless Wisdom",idx:23},{ep:2,name:"The Price of Greed",idx:24},{ep:2,name:"Souls of the Soulless",idx:25},{ep:2,name:"Futile Emotions",idx:26},{ep:2,name:"Departure from the Dragonewt Realm",idx:27},
+{ep:3,name:"The Bandaged Girl and the Mysterious Warriors",idx:0},{ep:3,name:"Familiar Faces and New Enemies",idx:1},{ep:3,name:"Apostolia and the God's Fragments",idx:2},{ep:3,name:"God's Fragments and the Ancient Dragon",idx:3},{ep:3,name:"The God's Fragments and Gido's Small Box",idx:4},{ep:3,name:"The God's Fragments and Dragon Priestess",idx:5},{ep:3,name:"President and Al Crysta",idx:6},{ep:3,name:"The Mountain Dragon and God's Fragments",idx:7},{ep:3,name:"Unchosen and Ineligible",idx:8},{ep:3,name:"The Lake Dragon and Bandit Girl",idx:9},{ep:3,name:"Evil Prophet and Temple",idx:10},{ep:3,name:"Crisis in Sateria and Battle Underground",idx:11},{ep:3,name:"The Three Trials and Wild Dragon",idx:12},{ep:3,name:"The Magic Circle and False Charge",idx:13},{ep:3,name:"The Heavy Armor Knights and Deep Mystery",idx:14},{ep:3,name:"The God's Fragments and Magic Circle",idx:15},{ep:3,name:"Innocence and Chain Reaction",idx:16},{ep:3,name:"The Sacred Plains and National Ruin",idx:17},{ep:3,name:"The Desolated City and Ouvel's Shadow",idx:18},{ep:3,name:"The Underground Town and Monsters' Den",idx:19},{ep:3,name:"The Sea Dragon and Devil's Island",idx:20},{ep:3,name:"The Betrayer and Dragon Priestess",idx:21},{ep:3,name:"The True Identity of Zolte and End of the Knights",idx:22},{ep:3,name:"The Emperor and Evil Dragon",idx:23},{ep:3,name:"The Palace of Greed and Monster Field",idx:24},{ep:3,name:"The God's Fragments and Evil Desire",idx:25},{ep:3,name:"The Angels' Garden and New Dragon King",idx:26},{ep:3,name:"Inconsistency and Identity",idx:27},{ep:3,name:"The End and a New Beginning",idx:28},
+{ep:4,name:"The Missing People",idx:0},{ep:4,name:"Chase the Black Mist",idx:1},{ep:4,name:"The Unknown Girl",idx:2},{ep:4,name:"The Mark and Singing Voice",idx:3},{ep:4,name:"The Blind Dragon",idx:4},{ep:4,name:"The Promise",idx:5},{ep:4,name:"Eternal Friendship",idx:6},{ep:4,name:"The Invisible Injury",idx:7},{ep:4,name:"The Tender Lie and Witch's Lamps",idx:8},{ep:4,name:"Ahead of the Light",idx:9},{ep:4,name:"Wish for Happy Moment",idx:10},{ep:4,name:"The Broken Clay Doll",idx:11},{ep:4,name:"In the Sunken Town",idx:12},{ep:4,name:"The Collapsing Dream",idx:13},{ep:4,name:"The Collapsing Area",idx:14},{ep:4,name:"The Result of the Desire",idx:15},{ep:4,name:"To the Future",idx:16},
+{ep:5,name:"A Guide from Another World",idx:0},{ep:5,name:"The King of Night",idx:1},{ep:5,name:"The Fallen Beast",idx:2},{ep:5,name:"The Moonlight Staff",idx:3},{ep:5,name:"Night Fokus",idx:4},{ep:5,name:"The Silent Beast",idx:5},{ep:5,name:"The King of the Sun",idx:6},{ep:5,name:"The Mysterious Gentleman of Dream",idx:7},{ep:5,name:"The Guardian",idx:8},{ep:5,name:"Cage of Wimps",idx:9},{ep:5,name:"Hill of Memories",idx:10},{ep:5,name:"The Strange Bird at Shadows of Dusk",idx:11},{ep:5,name:"The Lady Knight for People",idx:12},{ep:5,name:"Laughing Clown",idx:13},{ep:5,name:"Amends",idx:14},{ep:5,name:"Jewels of Swamp",idx:15},{ep:5,name:"Excessive King's Throne",idx:16},{ep:5,name:"Chaos Mixture",idx:17},{ep:5,name:"Joshuca",idx:18},{ep:5,name:"Empty container and Dark Soul",idx:19},{ep:5,name:"The Door of Hope",idx:20},
+{ep:6,name:"Underground Church Memories",idx:0},{ep:6,name:"A Boy's Determination",idx:1},{ep:6,name:"Prophet of the Stars",idx:2},{ep:6,name:"A Pleasure Bird's Guidance",idx:3},{ep:6,name:"The Colon Dance",idx:4},{ep:6,name:"A Sign of War",idx:5},{ep:6,name:"The God's Move",idx:6},{ep:6,name:"A Witch's Desire",idx:7},{ep:6,name:"The Forester's Mountain",idx:8},{ep:6,name:"The Lightning Maiden",idx:9},{ep:6,name:"The Sage in The Deep Cavern",idx:10},{ep:6,name:"Submarine Jewel",idx:11},{ep:6,name:"Mountainside Showdown",idx:12},{ep:6,name:"Star Child and Moonlight Beast",idx:13},{ep:6,name:"Requiem Aeternum",idx:14},{ep:6,name:"Sunset Encounter",idx:15},{ep:6,name:"Suspicious People and The Girl of Light",idx:16},{ep:6,name:"Flower Girl of Sunshine",idx:17},{ep:6,name:"Children of the Sky",idx:18},{ep:6,name:"Priestess of Water",idx:19},{ep:6,name:"The Maiden's Captured Breath",idx:20},{ep:6,name:"Vow of Sand",idx:21},{ep:6,name:"Brigand Hunt",idx:22},{ep:6,name:"Garden in a Dream",idx:23},{ep:6,name:"Savior",idx:24},{ep:6,name:"God",idx:25},{ep:6,name:"The Fruit of Wisdom",idx:26},{ep:6,name:"Queen of the Fortress",idx:27},{ep:6,name:"Goddess Beads",idx:28},{ep:6,name:"Resolution",idx:29},{ep:6,name:"Entrusting Hope",idx:30},{ep:6,name:"The Dark Domain",idx:31},{ep:6,name:"Birth",idx:32}
+];
+const EP_TOTALS={1:82,2:28,3:29,4:17,5:21,6:33};
+const TOTAL_GLOBAL=Object.values(EP_TOTALS).reduce((a,b)=>a+b,0);
+const APOSTOLIA=QUESTS.find(q=>q.ep===3&&q.idx===0);
+const SPECIA=QUESTS.find(q=>q.ep===6&&q.idx===0);
+function globalIdx(q){let g=0;for(let e=1;e<q.ep;e++)g+=EP_TOTALS[e];return g+q.idx;}
+const APOSTOLIA_G=globalIdx(APOSTOLIA);
+const SPECIA_G=globalIdx(SPECIA);
+
+function onType(){ /* unused, kept for safety */ }
+function doSearch(){ /* unused */ }
+
+const QUEST_OBJ = {
+  "The Goddess's Chalice": ["Check the Temple Ruins."],
+  "Dark Rumors": ["Talk to Telna the Alchemist.", "Talk to Dyron the Blacksmith."],
+  "Monster Taskforce": ["Kill 2 Colons, 2 Broschs, and 2 Mooths.", "Report to Varuna."],
+  "Supply Route Shadows": ["Talk to villagers.", "Get a Colon Bag to get water from Ronfa Mountains springs (110,10).", "Return it to Tilia."],
+  "Shadows in the Forest": ["Meet Tilia in Micerne Plains.", "Go to the house within Micerne Plains."],
+  "Mine Disaster": ["Talk to Tilia in Fort Bailune.", "Talk to the Family.", "Go to Rokoko Tunnels.", "Choose \"Arrest him\".", "Talk to the villagers again.", "Talk to Tilia."],
+  "Goddess Statue at the Mine": ["Go to Rokoko Mining Village (62,130).", "Battle starts."],
+  "Forgotten Shadow": ["Defeat Ferzen (Lv46).", "Talk to Varuna."],
+  "Unclaimed Crest": ["Go to Rokoko Windhole (55,75).", "Talk to Alen.", "Talk to Varuna again."],
+  "Formless Being": ["Kill 5 Dragnof, 5 Giant Gamma Boulder, 5 Goblin Rider, and 5 Chiro.", "Return to Tilia."],
+  "Ancient Writings": ["Talk to Alen.", "Go to Rokoko Windhole: Lower Level (57,67).", "Go to Saug Swamp (94,100).", "Go to Rokoko Plains (60,120).", "Return to Alen."],
+  "The Place of Darkness": ["Talk to Alen.", "Talk to Rita.", "Obtain Blue Stone, Glowing Dust, and Living Statue.", "Talk to Rita.", "Talk to Alen, Kady, Elder, and finally back to Alen."],
+  "Obstructing the Alliance": ["Talk to Venia.", "Defeat Dragist Thief (Lv49), Mage (Lv50), and Warrior (Lv52).", "Discover Slebinian Merchant in Rokoko Windhole: Lower Level.", "Talk to Kady.", "Retrieve stolen items at (52,33) and (37,57).", "Talk to Kady, then to Venia."],
+  "Fire Dragon Labyrinth": ["Talk to Venia.", "Defeat Darkmoeba (Lv60).", "Defeat Fire Dragon Blaiard (Lv72).", "Talk to Venia."],
+  "Ancient Chalice": ["Talk to Venia.", "Talk to Alen.", "Talk to Maya the Alchemist.", "Talk to Alen again.", "Go to Lunite Village.", "Talk to the villagers.", "Defeat Cerberus (Lv62).", "Talk to Elder.", "Retrieve the Right Key near (29,100) of Scorched Tunnels: Fire Path.", "Talk to Venia."],
+  "Encroaching Darkness": ["Talk to Venia.", "Talk to Rita.", "Go to the Rokoko Plains.", "Battle the Dark Knight (Lv70).", "Talk to Venia."],
+  "Battling the Dragon Lord": ["Talk to Venia.", "Fight Lord Dragon Kaiser (Lv99).", "Talk to Venia. (Dark Domain Unlocked)"],
+  "The Dark Domain": ["Talk to Elder.", "Defeat Dark Griffin and Dark Warrior (Lv64)."],
+  "A Witch's Honor": ["Go to Saug Swamp.", "Defeat three Dark Knights (Lv70).", "Go to Telete Forest.", "Fight Fire and Ice Warriors.", "Collect 1 Mythril, 1 Jewel Steel, and 1 Weaponsmith Book.", "Collect 2 Bead Fragments, 10 Glowing Feathers, and 1 Gold Fragment.", "Defeat the Fire and Ice Warriors.", "Talk to Venia. (Dark Manor Unlocked)"],
+  "The Goddess of Darkness and the General": ["Go to the Dark Manor.", "Defeat Vantendeth (Lv75). (Dark Castle Unlocked)"],
+  "The Fallen Angel's Tears": ["Defeat Fallen Angel Grecia (Lv88) and Dark Crystal (Lv90)."],
+  "The Two Councils": ["Go to the Nezim Wetlands.", "Talk to Pino in Sofya."],
+  "In the Shadow of the Capital": ["Go to Zalba Flatlands.", "Fight a Gilgobble (Lv83).", "Talk to Venia."],
+  "Wetlands Battle": ["Go to Nezim Wetlands.", "Defeat 3 Dragils (Lv85)."],
+  "Hole Lot of Wind": ["Defeat Sturm (Lv80)."],
+  "Two Tales": ["Talk to all the people in Pub.", "Talk to the NPCs in The Consulate: The Guild.", "Talk to Pino.", "Talk to Sherau.", "Collect 2 Pure Waters.", "Return to Sherau.", "Go back to Pino."],
+  "Little Robber Girl's Tears": ["Go to Nidea Coast.", "Defeat Toriton (Lv74) and Shelfy (Lv75).", "Talk to Pino."],
+  "Sea of Intrigue": ["Go to Nidea Coast and talk to Zarla.", "Collect 5 Hematite, 3 Ent Splinters, and 1 Blue Feather."],
+  "Fort of Intrigue": ["Defeat Wizaleon (Lv92)."],
+  "Highway of the Devil Plants": ["Defeat Colon Tree (Lv90)."],
+  "The Burning Flatlands": ["Defeat Burnos (Lv92)."],
+  "The Great Tree and The Dragon": ["Talk to the Great Tree.", "Defeat Wind Dragon Blauzen (Lv95).", "Return to the Great Tree.", "Talk to Pino."],
+  "The Disappearing Lake": ["Defeat Hydra (Lv95)."],
+  "Dust Cloud Dreams": ["Go to Zalm Desert and talk to Isuza.", "Defeat Bongea (Lv94).", "Return to Isuza."],
+  "From Ice to Water": ["Defeat Ice Dragon Eisen (Lv98).", "Talk to Isuza.", "Talk to Pino."],
+  "Highland Camp": ["Talk to Pino.", "Defeat Zolban (Lv96)."],
+  "Awaiting Orders": ["Defeat Zolban again.", "Defeat Halios (Lv100).", "Talk to Sauro."],
+  "To a New Future": ["Go to Teschen Highlands from Wibo City."],
+  "The Mystery Deepens": ["Go to Canterino Desert from Wibo City, then to Sigmy Valley."],
+  "The Toils of War": ["Go to Kilf Plains (68,213).", "Gather machinery and strange medicine at (177,177).", "Defeat Maton (Lv100) at (84,77)."],
+  "The Inje Idol": ["Talk to Sitara.", "Talk to the Inje Man twice.", "Talk to Kubron.", "Defeat False Grecia (Lv127).", "Go back to Kubron.", "Talk to Sitara."],
+  "Slebenian Shadow": ["Go to Bandit Lands.", "Defeat 3 Goblins (Lv100).", "Go to Geist Village.", "Collect 3 machinery bits at (105,146), (60,132), and (137,102).", "Go to Geist Alleyway.", "Walk in the order: right, right, left, right, right.", "Defeat Lund (Lv130), Tetro (Lv133), and Guar (Lv131)."],
+  "Holy Child": ["Rescue the girl at Curonne Highway (218,118).", "Talk to Curonne.", "Defeat Agoracanth (Lv134).", "Talk to Curonne again."],
+  "God-Killing Trap": ["Talk to Curonne.", "Talk to Obligaus in Mt. Mithruna.", "Talk to Curonne again, then Obligaus again.", "Defeat Schlingel (Lv140).", "Talk to Curonne."],
+  "Chain Crisis": ["Approach Curonne.", "Defeat the 3 Degizman (only the lv136 one is required).", "Return to Curonne.", "Talk to Supervisor in Tarnath Mines.", "Talk with the Miners at (200,123), (50,191), and (92,143).", "Defeat Beelzed (Lv147).", "Talk to Curonne."],
+  "Hot Sand, Fierce Fight": ["Talk to Curonne.", "Defeat Sand Dragon Zant (Lv150). (Don't kill Vinz Zant)"],
+  "Sinister Scheme Setback": ["Talk to Curonne.", "Defeat Garoo at Elium Ruins.", "Defeat Bossheit (Lv163) and Magical Weapon (Lv150). (Killing Magical Weapon ends the battle)", "Report to Curonne."],
+  "Teaus Reconciliation": ["Talk to Curonne.", "Defeat Matar (Lv155).", "Go to Teaus Outskirts and defeat 3 Vork.", "Talk to Curonne. (You earn a slotted special equipment)"],
+  "Victory at Zalsim": ["Talk to Curonne.", "Defeat Matadora (Lv158).", "Return to Curonne."],
+  "Scaling the Dark Mountains": ["Go to Zalsim Fields.", "Go to Elf Mountains.", "Defeat Dark Dragon Finstern (Lv166)."],
+  "Peculiar Place": ["Go to Morthell Swell.", "Defeat Kaise Pilz (Lv168)."],
+  "The Labyrinth of Leaves": ["Go to Altoale Sector.", "Kill 30 Album, 30 Mariquita, and 10 Taran.", "Defeat Tarante (Lv170).", "Go to Dikkit Sector."],
+  "Frenzied Fight in the Former City": ["Kill 20 Ghoulie (Lv144).", "Go to Capital City Elban."],
+  "Treetop Metropolis": ["Go to Magic Research Institute.", "Go to Dikkit Sector.", "Defeat Advanced Ghoulie (Lv165) and Todel (Lv170)."],
+  "Palatial Trail": ["Go to The Diet.", "Go to Pub: Flene's, then talk to Ralul.", "Go to (135,45) for cutscene.", "Return to The Diet."],
+  "Reconciliation of the Gods": ["Go to The Palace.", "Talk to King Elbano.", "Defeat Anubites (Lv172)."],
+  "Background to a Blunder": ["Go to The Palace.", "Talk to King Elbano.", "Talk to Vafardo at Magic Research Institute.", "Kill 2 Hallucigenia (Lv150) in the Inneban Ruins.", "Defeat Gusanoth (Lv175)."],
+  "The Old Man and His Research": ["Go to the Maze of Enzeits.", "Defeat Sky Dragon Himmel (Lv180).", "Report to Vafardo."],
+  "Father and Daughter at Odds": ["Go to The Diet.", "Go to Bizen Forest Sector.", "Defeat Plazuda (Lv180)."],
+  "To the Source of Strife": ["Go to The Palace.", "Talk to King Elbano.", "Go to Baustelle Sector.", "Defeat Altadora (Lv182).", "Go to Haufen Harbor.", "Talk to Captain Leberk.", "Kill 20 Polpo, 10 Squalo.", "Talk to Captain Leberk again.", "Collect 10 Bent Screws."],
+  "Water People Samurai": ["Defeat Heike Crab (Lv150)."],
+  "Gated God": ["Go to Mikasa Gate.", "Defeat Shojo (Lv185).", "Return to Ganaji Strand."],
+  "The Minase and the Sanki": ["Go to Minaula City.", "Talk to Suigetsu."],
+  "Masked Temple": ["Go to Isurugi Temple.", "Defeat Gankaku (Lv187)."],
+  "Divine Sword": ["Go to Eccentric's Manor.", "Defeat Ganei (Lv190).", "Talk to Suigetsu."],
+  "Deserted Village": ["Go to Yamabachi Village.", "Return to Suigetsu.", "Go to Shojo.", "Go to Amazuki Castle.", "Defeat Minenaga (Lv191).", "Defeat Isurugi Statue (Lv193)."],
+  "To Slebinia": ["Talk to Suigetsu."],
+  "Defiant Harbor": ["Talk to Levia in Spargas."],
+  "The Unjust Jail": ["Talk to Fenel.", "Go to Algaotte Prison.", "Open the cells.", "Defeat Metalbrow (Lv195)."],
+  "Village Lockdown": ["Go to Oof Plains.", "Defeat 3 Raptors (Lv160).", "Go to Curiolto.", "Defeat Garel (Lv196).", "Return to Oof Plains."],
+  "Community in Crisis": ["Go to Kilmly Highlands."],
+  "Mine Partisans": ["Go to Dierolt.", "Talk to Ulde.", "Defeat Zimov (Lv200)."],
+  "Highland Devastation": ["Talk to Ulde.", "Go to Ifmolt Village.", "Defeat 3 Deluns (Lv165)."],
+  "A Crushing Blow to Evil": ["Go to Mt. Holton.", "Defeat Rossam (Lv203).", "Go to Algoatte Prison.", "Go to Dierolt and talk to Ulde.", "Go back to Mt. Holton.", "Go back to Dierolt and talk to Ulde again."],
+  "The Power that Starves": ["Go to The Industrial City of Regus.", "Defeat Jabek (Lv206).", "Go to Curiolto.", "Defeat Thunder Dragon Blitz (Lv205).", "Go back to The Industrial City of Regus.", "Defeat Jabek again."],
+  "Collapsed Plains": ["Go to Notul Plains (Ep1)."],
+  "Wicked Ambition": ["Go to Grolg Mountains.", "Defeat Simcracker (Lv211).", "Return to Notul Plains (Ep1) and talk to Eluiton."],
+  "Fort of Chaos": ["Go to Fort Slebinus.", "Defeat Azimov (Lv211)."],
+  "Vestiges of Darkness": ["Go to Marel Epicenter."],
+  "The Mournful Empress": ["Go to The Imperial City Lograth.", "Defeat Mezzaluna (Lv214)."],
+  "The Final Battle, and...": ["Go to Mezzaluna Palace.", "Defeat Sianas (Lv220)."],
+  "Beyond the Adventure": ["Go to The Imperial City Lograth from Mezzaluna Palace. (Divine Tower Unlocked)"],
+  "A Sudden Start": ["Go to Mt. Jimuy.", "Defeat Beelzenoid (Lv200).", "Go to Pango Flatlands."],
+  "The Dragonewt Realm: Bleudraf": ["Go to Drafbourg.", "Talk to Mujie.", "Go to Euji Forest.", "Defeat Masked Man (Lv200).", "Go to Frontline Base.", "Defeat Captain Beelzem (Lv202)."],
+  "The God of Justice's Lament": ["Go to Ekundu Way.", "Fight Pursuer (Lv200).", "Go to Ruins of Zamani.", "Defeat Beelzedam (Lv205).", "Go back to Ekundu Way.", "Go to Drafbourg and talk to Mujie."],
+  "Blighted Village": ["Go to Ekundu Way.", "Go to Magonza Fortress.", "Defeat Magonza (Lv207).", "Exit Magonza Fortress: Top Floor for a cutscene.", "Go to Ekundu Way.", "Report to Mujie."],
+  "Mutant Dragonewts": ["Go to Mubele Pass.", "Defeat Ziddu (Lv210).", "Go to Dyuf Village."],
+  "Dragonewt Feedlot": ["Go to Mawid Plains.", "Defeat Soldier Beelzem (Lv200).", "Go to Dragnof Feedlot.", "Defeat Beelzenom (Lv211).", "Report to Tyfa in Mawid Plains."],
+  "The Lograth Rebellion": ["Talk to Tyfa.", "Talk to Umna.", "Collect 1 Rubellite, 1 Crimson Pebble, 1 Spiny Vine, 1 High Ent Wood.", "Return to Umna.", "Go to Lograth Outskirts (Ep2).", "Defeat Masked Fighter (Lv200).", "Go to Notul Plains (Ep2).", "Defeat Beelzetor (Lv220).", "Return to Delma at Lograth Outskirts (Ep2)."],
+  "City of Survivors": ["Talk to Delma.", "Go to Fossa Flatlands from Notul Plains (Ep2).", "Go to Pilaneza City."],
+  "The End of Ambition": ["Talk to Magran.", "Go to Guevol's Fortress.", "Defeat Guevol (Lv227).", "Return to Magran."],
+  "The Disappearing Gods": ["Talk to Magran.", "Go to Fossa Flatlands.", "Defeat 2 Lizard Reapers (Lv192).", "Go to Kimale's Fortress.", "Defeat Gerust (Lv226).", "Talk to Shekto in Maze of Umberto (Ep2)."],
+  "The Overworld": ["Go to Kakeula Rift from Kimale's Fortress.", "Go to Kakeula City.", "Go to Hashiba Valley.", "Defeat Gadave (Lv230).", "Exit Hashiba Valley for a cutscene.", "Talk to Ryuan in Kakeula City."],
+  "Other World Dragon": ["Talk to Ryuan.", "Go to Isawa Forest.", "Defeat Pursuer (Lv210).", "Go to Mt. Ochikubo.", "Defeat Sakimori no Ryu (Lv234).", "Return to Mujie in Drafbourg."],
+  "The Dragonewt Priests": ["Talk to Mujie.", "Go to Kreldan Church Street.", "Talk to Archbishop.", "Defeat Lord Dragon Kaiser (Lv242)."],
+  "The Dragonewts' Secret": ["Talk to Archbishop.", "Go to Ruined Abbey.", "Defeat Moldus (Lv237).", "Return to Archbishop.", "Collect 30 Red Wax.", "Talk to Vidar in the Diplomatic Agency.", "Talk to Archbishop."],
+  "An Unexpected Encounter": ["Talk to Archbishop.", "Go to Living Fortress.", "Defeat Vida (Lv241).", "Return to Archbishop.", "Report to Mujie."],
+  "The Brothers Kidnapped": ["Talk to Mujie.", "Go to Draftol."],
+  "The Dragon Emperor's Palace": ["Go to Dragon Emperor's Palace.", "Defeat Masked Soldier (Lv238)."],
+  "Niapa's Nefarious Plan": ["Defeat Niapa (Lv250).", "Report to Mujie."],
+  "Demons, Gods and Emperors": ["Talk to Mujie.", "Go to Halib Marshlands.", "Defeat Nuit (Lv255).", "Return to Kasoko Mountains."],
+  "Noieverre, The New World": ["Go to Isthmus of Kabri.", "Defeat Seele Zauga II (Lv235).", "Go to Noieverre.", "Defeat Warrior of Light (Lv256).", "Exit Noieverre: Deepest Part for a cutscene.", "Return to Mujie. (Alte Colette unlocked)"],
+  "The Road to Xeltzam": ["Talk to Mujie.", "Talk to Unma in Dyuf Village.", "Go to Kijiko Cirque.", "Defeat Tapejara (Lv226).", "Go to Fort Viota.", "Defeat Morbeelzem (Lv255).", "Exit Fort Viota for a cutscene.", "Go to Pilaneza City.", "Talk to Magran."],
+  "Mutated Predators": ["Talk to Magran.", "Go to Kilua Wasteland.", "Return to Magran.", "Go to Primordial Lands.", "Defeat Gatekeeper Beelzem (Lv247).", "Defeat Xeltysis (Lv259).", "Return to Magran.", "Talk to Eruru the Blacksmith.", "Collect 3 Dirty Gears, 10 Hot Rockshards, 20 Jet Black Liquids, and 2 Large Needles.", "Return to Eruru the Blacksmith."],
+  "The Shrine of Geyanetiel": ["Talk to Magran.", "Talk to Eruru the Blacksmith.", "Go to Pillared Corridor. (Tip: Stick near the pillar shards)", "Go to Palace Gates. (Tip: Choose the left door at end of Area 3)", "Defeat Imseti (Lv265)."],
+  "Mindless Wisdom": ["Go to 1st Palace: Forecourt.", "Defeat Ghalib Doll (Lv230).", "Defeat 2 Rafale (Lv231).", "Go to 1st Palace.", "Defeat Dyett (Lv250). (Tip: Choose Attack Tilia)", "Defeat Thothras (Lv266)."],
+  "The Price of Greed": ["Go to 2nd Palace: Forecourt.", "Defeat 3 Soldier (Lv234).", "Go to 2nd Palace.", "Defeat Nuitram (Lv271)."],
+  "Souls of the Soulless": ["Go to 3rd Palace: Forecourt.", "Defeat Pursuer (Lv260).", "Go to 3rd Palace.", "Defeat Ushilth (Lv268)."],
+  "Futile Emotions": ["Go to Upper Palace: Forecourt.", "Fight Heavy Armor Knight (Lv237). (Tip: Wait until a cutscene happens)", "Go to Upper Palace.", "Defeat Raton (Lv274).", "Defeat Raton (Lv280).", "Report to Mujie in Drafbourg."],
+  "Departure from the Dragonewt Realm": ["Go to Pango Flatlands from Drafbourg."],
+  "The Bandaged Girl and the Mysterious Warriors": ["Go to Mocus Jungle.", "Defeat 2 Ape Man (Lv232).", "Go to Heavy Armor Knight Fortress.", "Defeat Dym (Lv262) and Rufaty (Lv260).", "Defeat Irai (Lv270).", "Go to Mocus Jungle from Heavy Armor Knight Fortress.", "Go to Oltoga Village.", "Talk to Digo. (Apostalia unlocked)"],
+  "Familiar Faces and New Enemies": ["Talk to Digo.", "Go to Gennun Artificial Cave.", "Defeat Zazel (Lv267).", "Return to Digo."],
+  "Apostolia and the God's Fragments": ["Talk to Digo. (You get a Blank Al and Adventurer Al)", "Go to Rosana Highland.", "Collect 5 ML Crysta.", "Go to Mt. Alcado.", "Defeat Sianas (Lv270) and Giant Ape (Lv271). (Tip: Killing Sianas ends the fight)", "Report to Digo."],
+  "God's Fragments and the Ancient Dragon": ["Talk to Digo.", "Go to Lograth City.", "Go to Ancient Dragon's Shrine.", "Defeat Old Dragon Altan (Lv274).", "Talk to Delma in Lograth City."],
+  "The God's Fragments and Gido's Small Box": ["Talk to Delma.", "Go to Regth Ravine.", "Return and talk to Delma.", "Talk to Falt the Merchant.", "Go to Hexeyag Forest.", "Collect 2 Flexible Shells, 1 Mysterious Bark, 3 Bear Fangs, and 1 Orichalcum.", "Talk to Rita.", "Go to Spargas Greenfield.", "Return to Rita.", "Talk to Delma."],
+  "The God's Fragments and Dragon Priestess": ["Talk to Delma.", "Go to Spargas Greenfield.", "Talk to Rita.", "Collect 5 Mythrils.", "Return to Rita.", "Go to Forest Palace.", "Defeat Astem (Lv270).", "Defeat Forest Dragon Valtia (Lv276).", "Exit Forest Palace: Dragon's Room for a cutscene.", "Report to Delma."],
+  "President and Al Crysta": ["Talk to Yurisla.", "Go to Astol District.", "Defeat Wood Golem (Lv250).", "Go to Sateria City: President's Office.", "Go to Sigmi District.", "Defeat Death Chils (Lv278).", "Return to Sateria City: President's Office."],
+  "The Mountain Dragon and God's Fragments": ["Talk to Mea.", "Go to Bestie Mountain.", "Defeat Mt. Dragon Bergen (Lv279).", "Return to Sateria City: President's Office."],
+  "Unchosen and Ineligible": ["Talk to Curonne.", "Go to Elium District.", "Collect 2 Old Books.", "Go to Baulia Tree Hollow.", "Defeat Gauchel (Lv280).", "Return to Sateria City: President's Office."],
+  "The Lake Dragon and Bandit Girl": ["Talk to Curonne.", "Go to Tolbas Green District.", "Defeat Besyak (Lv256).", "Go to Kreya City.", "Talk to Lora.", "Go to Lede Lake.", "Defeat Lake Dragon Larkas (Lv284).", "Return to Lora.", "Report to Mea."],
+  "Evil Prophet and Temple": ["Talk to Curonne.", "Go to Rofesi Temple.", "Defeat Bull Statue (Lv277).", "Defeat Dajarte (Lv285). (Tip: Don't move when the purple circle appears)", "Return to Sateria City: President's Office."],
+  "Crisis in Sateria and Battle Underground": ["Go to Sateria City: President's Office.", "Go to Sateria Underground.", "Defeat Muzrak (Lv262).", "Go to Maze of Dendroa.", "Defeat Barbad (Lv286). (Tip: Automatic defeat if you ignite)"],
+  "The Three Trials and Wild Dragon": ["Talk to Curonne.", "Talk to Nelua in Kreya City.", "Go to Ein Wasteland.", "Defeat Theru (Lv286).", "Talk to Sercon.", "Go to Trial Hall: First Area.", "Collect 10 Fragment of Proof.", "Go to Trial Hall: Second Area.", "Kill 20 Shadow Lancers.", "Go to Trial Hall: Third Area.", "Collect 3 Thick Strings and kill 20 Shadow Swordsmen.", "Go to Trial Hall: Fourth Area.", "Defeat Wild Dragon Wilnes (Lv287).", "Go back to Ein Wasteland.", "Talk to Sercon."],
+  "The Magic Circle and False Charge": ["Talk to Sercon.", "Go to Athel Plains.", "Defeat Rua (Lv287).", "Go to Babon Valley.", "Defeat Gate Guard (Lv288).", "Return to Eslem in Athel Plains."],
+  "The Heavy Armor Knights and Deep Mystery": ["Talk to Eslem.", "Go to Capital City Eldan.", "Talk to Nete the Merchant.", "Talk to Flene in Pub: Bottom of Heaven.", "Go to Almas Shrine.", "Defeat Guard Dragon Aufsea (Lv289).", "Return to Eslem."],
+  "The God's Fragments and Magic Circle": ["Talk to Eslem.", "Go to Kushta Small Shrine.", "Defeat Maelriel (Lv290).", "Talk to Flene."],
+  "Innocence and Chain Reaction": ["Talk to Flene.", "Go to Klarf Wetlands.", "Defeat Biflog (Lv290).", "Go to Capital City Eldan: Palace.", "Talk to King Elbano.", "Go to Magic Research Institute.", "Defeat Glabora (Lv291)."],
+  "The Sacred Plains and National Ruin": ["Talk to King Elbano.", "Go to Urslo Sacred Plains.", "Defeat Grippe (Lv282).", "Defeat Behemoth (Lv292). (Tip: Kill the 2 Obelisks (Lv292) before fighting Behemoth)", "Report to King Elbano."],
+  "The Desolated City and Ouvel's Shadow": ["Talk to King Elbano.", "Go to Rokoko Mine Ruins.", "Talk to Varuna.", "Go to Capital City Gulia.", "Defeat Cerbera (Lv293)."],
+  "The Underground Town and Monsters' Den": ["Talk to Varuna.", "Collect 1 Fluorite, 1 Red Horn, kill 15 Death Ents and 15 Magic Soldiers.", "Return to Varuna.", "Go to Underground Bailune.", "Talk to Lowy.", "Go to Ronfa Calcareous Cave.", "Defeat Turret (Lv283).", "Defeat Parazaia (Lv294).", "Return to Lowy."],
+  "The Sea Dragon and Devil's Island": ["Talk to Varuna.", "Go to Parul Coast.", "Defeat Sea Dragon Meelis (Lv294).", "Go to Leybas Island.", "Defeat Mamonea (Lv295).", "Return to Meelis at Leybas Island: Area 1."],
+  "The Betrayer and Dragon Priestess": ["Go to Parul Coast.", "Go to Heat Dragon's Mountain.", "Defeat Cheltil (Lv296).", "Talk to Lowy."],
+  "The True Identity of Zolte and End of the Knights": ["Talk to Lowy.", "Go to Sauro Village.", "Defeat Pelgob (Lv277) and Bombgob (Lv278).", "Defeat 3 Pelgobs.", "Go to Karue Arena.", "Defeat Zolte (Lv297).", "Return to Sauro Village."],
+  "The Emperor and Evil Dragon": ["Go to Planned Site for Neo Gulia.", "Defeat 2 High Orcs (Lv280).", "Go to Imperial Palace.", "Defeat Evil Dragon Leviam (Lv298)."],
+  "The Palace of Greed and Monster Field": ["Check the Transfer Device in Imperial Palace: Main Chamber.", "Find 2 Al Crystas in Imperial Palace.", "Defeat Leviam Ghost (Lv298).", "Go to Leelid's Field.", "Talk to Leelid.", "Collect 2 Benitoite, 5 Familiar's Furs, and 15 Hard Claws.", "Return to Leelid.", "Go to Enina Palace.", "Defeat Enina (Lv305)."],
+  "The God's Fragments and Evil Desire": ["Go to Fly Knights' Valley.", "Talk to Elder Zeblam.", "Go to Ibrie Palace.", "Defeat Tetal (Lv296).", "Defeat Bizon (Lv297).", "Defeat Farzan (Lv296).", "Defeat Fallen Angel Ibrie (Lv307)."],
+  "The Angels' Garden and New Dragon King": ["Go to Fallen Angels' Territory.", "Defeat Exusia Gewalt (Lv300).", "Go to Meligia Palace.", "Defeat Dominido (Lv300).", "Defeat Fallen Angel Meligia (Lv309)."],
+  "Inconsistency and Identity": ["Go to Supreme Palace.", "Defeat Jahoel (Lv312).", "Go to Enina Palace: Area 2.", "Go to Ouvel's Chamber.", "Defeat Ouvel (Lv330)."],
+  "The End and a New Beginning": ["Return to all the places you've been to in cutscenes."],
+  "The Missing People": ["Go to Marel Epicenter.", "Talk to Varuna in Rokoko Plains."],
+  "Chase the Black Mist": ["Talk to Leberk in Haufen Harbor.", "Fight Wizard (Lv350)."],
+  "The Unknown Girl": ["Talk to Leberk.", "Go to Ioleu Village.", "Talk to Tilia.", "Go to Food Storage.", "Defeat Iniliba (Lv315).", "Talk to Moa at Ioleu Village."],
+  "The Mark and Singing Voice": ["Talk to Moa.", "Go to Taracsca Cavern.", "Defeat Oul (Lv311).", "Defeat Minela (Lv317)."],
+  "The Blind Dragon": ["Talk to Oul.", "Go to Dafni Mountains.", "Return to Oul.", "Return to Dafni Mountains.", "Defeat Minela (Lv319).", "Return to Oul.", "Talk to Moa. (You earn Schnell Cocktails, Baked Honey Bananas, and Salt Steamed Chickens)"],
+  "The Promise": ["Talk to Telon in Ioleu Village.", "Talk to Lyde in Philiza Coast.", "Go to Rucao Coast.", "Defeat Tifo (Lv310).", "Go to Maios.", "Talk to Shelk.", "Go to Elder's Room.", "Go to Repus Forest.", "Defeat Shelk (Lv325). (You earn a High Mythril)"],
+  "Eternal Friendship": ["Talk to Kagan.", "Go to Stiof Volcano.", "Defeat Merario (Lv328).", "Return to Maios. (You earn Catura Talisman)"],
+  "The Invisible Injury": ["Talk to Karna.", "Go to Makia's Path.", "Defeat Kagan (Lv326).", "Go to Tower of Yafula.", "Defeat Kagan (Lv331)."],
+  "The Tender Lie and Witch's Lamps": ["Talk to Mea in Elder's Room.", "Talk to Karna.", "Go to Staros Valley of Depravity.", "Defeat Wizard (Lv333).", "Go to Deeos Village.", "Go to Celasmapaty the Ice Castle.", "Talk to Malti.", "Collect 3 Edged Horns, 3 Spirit Frost Crystals, and 20 Fine-Flaked Snow.", "Return to Malti.", "Go to Staros Valley of Depravity: Area 3. (You earn Freeze Vaccines)", "Go to Repus Forest: Witch's House.", "Collect 1 Unextinguishable Spark, 3 Fire Crocodile Oils, and 5 Quartz.", "Return to Rild in Repus Forest: Witch's House."],
+  "Ahead of the Light": ["Talk to Rild.", "Go to Celasmapaty the Ice Castle.", "Defeat Jusal (Lv326).", "Defeat Malti (Lv332).", "Return to Rild. (You earn Thick Remagic L)"],
+  "Wish for Happy Moment": ["Go to Deeos Village.", "Go to Reoctove.", "Play Hide and Seek with the kids. (Tip: One is in East Wall, the other in the Blacksmith's Room)", "Talk to Patrio.", "Go to Forisco Plains: South.", "Return to Reoctove. (You earn Hihiirokane)"],
+  "The Broken Clay Doll": ["Talk to Anis.", "Collect 10 Beef, 10 Eggs, 10 Milk, and 10 Mushroom Stipe.", "Return to Anis.", "Go to Abyss of Mira.", "Defeat Fimbul (Lv333). (Tip: Kill Crystal (Lv333) before fighting Fimbul)"],
+  "In the Sunken Town": ["Talk to Patrio.", "Go to Riagro Town.", "Collect 10 Angelica Acutilobas.", "Return to Radfo in Riagro Town.", "Defeat Anis (Lv334)."],
+  "The Collapsing Dream": ["Talk to Telon in Reoctove.", "Talk to Karna in Maios.", "Go to Staros Valley of Depravity: Top.", "Go to Gracalb the Ice Cavern.", "Defeat Grapagos (Lv334).", "Collect 5 Pearls.", "Return to Grapagos.", "Talk to Karna."],
+  "The Collapsing Area": ["Talk to Karna.", "Go to Timoa Cloister.", "Defeat Heaven Gate Guard (Lv330).", "Defeat Cordal (Lv336)."],
+  "The Result of the Desire": ["Talk to Cordal in Near Forisco Plains.", "Go to Taracsca Cavern.", "Defeat Oul (Lv311).", "Go to Celasmapaty the Ice Castle.", "Talk to Jusal.", "Go to Abyss of Mira.", "Talk to Tela.", "Talk to Specia in Near Forisco Plains."],
+  "To the Future": ["Talk to Specia.", "Go to Carbel the Maze of Time.", "Defeat Telon (Lv347).", "Go to Histaria the Maze of Miracle.", "Defeat Gatekeeper (Lv360)."],
+  "A Guide from Another World": ["Go to Anubites in Capital City Elban. (You earn Chief God's Stone)", "Go to King Elbano."],
+  "The King of Night": ["Go to Mioreita Castle."],
+  "The Fallen Beast": ["Talk to Nelia.", "Go to Schpelio the Deserted Village.", "Defeat Laster (Lv350).", "Go to Nachalt Village Path.", "Report to Ster in Mioreita Castle."],
+  "The Moonlight Staff": ["Talk to Nelia.", "Go to Thelt Forest.", "Go to Mount Nachberg.", "Defeat Ster (Lv355)."],
+  "Night Fokus": ["Talk to Nelia.", "Go to Weffle Tower.", "Defeat Agira Jarma (Lv358)."],
+  "The Silent Beast": ["Talk to Apfel.", "Go to Kifalt Forest.", "Defeat Wyn (Lv361)."],
+  "The King of the Sun": ["Go to Robene Grassland.", "Go to Tagche's Cottage.", "Go to Montalt Forest.", "Defeat Amatis (Lv363). (You earn Festan Ring)"],
+  "The Mysterious Gentleman of Dream": ["Go to Tagche's Cottage.", "Go to Montalt Forest.", "Return to Ilsa at Tagche's Cottage.", "Go to Hilhaus Mansion.", "Defeat Frederico (Lv364).", "Return to Tagche's Cottage."],
+  "The Guardian": ["Talk to Ilsa.", "Go to Robene Grassland.", "Go to Maldario.", "Go to Hazelan Stonestep.", "Defeat Teo (Lv366)."],
+  "Cage of Wimps": ["Talk to Foxxus in Xaofks Castle.", "Go to Achitem Training Stairs.", "Defeat Foxxus (Lv367).", "Return to Xaofks Castle.", "Talk to Foxxus."],
+  "Hill of Memories": ["Talk to Foxxus.", "Go to Phoblus Coast Hill.", "Go to Taushella Cave.", "Defeat Vulschem (Lv368)."],
+  "The Strange Bird at Shadows of Dusk": ["Talk to Nelia in Taushella Cave: Rofe Giant Hole.", "Go to Mioreita Castle.", "Go to Kifalt Forest.", "Defeat Cecilia (Lv369).", "Return to Mioreita Castle."],
+  "The Lady Knight for People": ["Talk to Nelia.", "Go to Aqruf Town.", "Talk to Mirabelle the Blacksmith.", "Go to Kifalt Forest.", "Talk to Aberg.", "Return to Mirabelle the Blacksmith.", "Go to Aqruf Town: Rubilach Hall.", "Defeat Ganesha (Lv371)."],
+  "Laughing Clown": ["Talk to Sigrid.", "Go to Gerald Town Road.", "Go to Amesberg Peaks.", "Defeat Rogelio (Lv372)."],
+  "Amends": ["Talk to Foxxus.", "Go to Mioreita Castle.", "Go to Klanupp the Unexplored.", "Defeat Pauk (Lv373).", "Return to Foxxus.", "Go to Mioreita Castle."],
+  "Jewels of Swamp": ["Talk to Cynthia.", "Go to Xaofks Castle.", "Go to Yadelt Forest.", "Defeat Gloenra (Lv374).", "Talk to Welle in Pelitose Fountain."],
+  "Excessive King's Throne": ["Talk to Welle.", "Go to Ratzbourg Castle.", "Defeat Bernhardt (Lv375)."],
+  "Chaos Mixture": ["Talk to Cordal in Ratzbourg Castle: Main Chamber.", "Go to Gotalk Mountain Path.", "Collect Eggs placed around the map.", "Talk to Golmadillo.", "Go to Gotalk Mountain Path: Cathedral.", "Defeat Fred (Lv375).", "Collect 3 Medical Herbs and 3 Underwater Flowers.", "Return to Nelia in Gotalk Mountain Path: Cathedral."],
+  "Joshuca": ["Go to Dyarine Church.", "Defeat Ignatz (Lv375)."],
+  "Empty container and Dark Soul": ["Talk to Cordal in Dyarine Church: Underground.", "Exit Dyarine Church: Underground for a cutscene.", "Go to Xaofks Castle.", "Defeat Alan (Lv380)."],
+  "The Door of Hope": ["Talk to Nelia in Xaofks Castle.", "Go to Geschrei Hall.", "Defeat Joshuca (Lv400)."],
+  "Underground Church Memories": ["Talk to Dyett in Capital City Elban: The Research Institute. (You earn Specia's Blessed Stone)", "Talk to Alen in Bailune City.", "Go to Roye Underground Church.", "Defeat Gan Ceann (Lv380).", "Go to Roye Underground Church: Bottom."],
+  "A Boy's Determination": ["Talk to Cell in Roye Underground Church: Bottom.", "Go to Marel Epicenter.", "Talk to Cell.", "Defeat Timid Boy (Lv15) and Keltoi (Lv15).", "Go to Flower Garden.", "Defeat Botanutte (Lv382).", "Return to Bailune Sanctuary."],
+  "Prophet of the Stars": ["Talk to Cell in Marel Epicenter.", "Talk to Tilia.", "Go to Micerne Plains.", "Touch the crystal.", "Defeat Girl (Lv370) or Sauro (Lv370).", "Go to Dragon Trial Site.", "Defeat Uradoom (Lv384). (Relic Glass unlocked)"],
+  "A Pleasure Bird's Guidance": ["Talk to Joshuca in Micerne Plains.", "Go to Warrior Practice Ground.", "Defeat Star Spirit (Lv365), Flare Horse (Lv367), and Goblin (Lv366).", "Talk to Licht.", "Defeat Sauro (Lv385).", "Talk to Licht again.", "Defeat Debby (Lv385)."],
+  "The Colon Dance": ["Talk to Joshuca in Micerne Plains.", "Go to Rokoko Plains.", "Collect 1 Big Colon Leaf.", "Return to Rokoko Plains.", "Touch the crystal.", "Defeat Hanged Colon (Lv361), Drill Colon (Lv362), and Shaman Colon (Lv360).", "Go to Pillar Plant Bed.", "Defeat Gigant Colon (Lv387).", "Return to Rokoko Ground. (You earn 50 Dragon Stones)", "Touch the crystal in Rokoko Plains again."],
+  "A Sign of War": ["Talk to Venia.", "Go to Ronfa Mountains.", "Touch the crystal.", "Defeat 4 Slebinian Soldiers (Lv362).", "Defeat 2 more Slebinian Soldiers around Sofys' Bosom.", "Defeat Oswald (Lv389)."],
+  "The God's Move": ["Talk to Joshuca in Sofys' Bosom.", "Go to Corridor of Wisdom.", "Defeat Angenger (Lv390).", "Return to Hall of Knowledge."],
+  "A Witch's Desire": ["Talk to Joshuca in Sofys' Bosom.", "Talk to Alen in Rokoko City.", "Go to Witch Hunter Woods.", "Touch the crystal.", "Collect 3 Secret Source.", "Talk to Girl.", "Go to Rokoko Village.", "Go to Violet Forest.", "Defeat Roy (Lv392)."],
+  "The Forester's Mountain": ["Talk to Roy.", "Go to Regene Woodland.", "Defeat Giorgio (Lv393)."],
+  "The Lightning Maiden": ["Talk to Monica in Violet Forest: Iron Den.", "Go to Rokoko City.", "Talk to Alen.", "Go to Oof Plains.", "Touch the crystal.", "Go to Orolhool.", "Examine the tree.", "Defeat 4 Soldiers (Lv370).", "Fight Einsam (Lv387)."],
+  "The Sage in The Deep Cavern": ["Talk to Joshuca in Oof Plains.", "Go to Rokoko City.", "Talk to Alen.", "Go to Forgotten Cave.", "Touch the crystal.", "Go to Game Board Cave.", "Defeat Vasguille (Lv372) and Ferzen (Lv380).", "Defeat Altern (Lv394)."],
+  "Submarine Jewel": ["Talk to Cell in Forgotten Cave.", "Talk to Girls in Rokoko Plains.", "Go to Rokoko Windhole.", "Touch the crystal.", "Go to Diel Village.", "Talk to Kady.", "Touch the crystal again.", "Go to Dragon's Passage.", "Defeat Trashiddoh (Lv395)."],
+  "Mountainside Showdown": ["Talk to Joshuca in Rokoko Windhole.", "Talk to Alen.", "Go to Saug Swamp.", "Touch the crystal.", "Talk to Cordal in Capital City Elban: The Palace.", "Talk to Karna in Maios.", "Return to the crystal.", "Go to Rooks Mountain.", "Defeat Vicdart Δ (Lv396)."],
+  "Star Child and Moonlight Beast": ["Talk to Maisie in Rooks Mountain.", "Go to Telete Cave.", "Talk to Glossa.", "Collect 10 Underwater Flowers and 10 Big Wings.", "Return to Glossa.", "Defeat Callecra (Lv396)."],
+  "Requiem Aeternum": ["Talk to Glossa in Telete Cave: Area 1.", "Go to Caldera Village.", "Go to Keikoku Mountains.", "Defeat Blaiard (Lv397).", "Go back to Caldera Village.", "Defeat Berserk Vicdart (Lv390)."],
+  "Sunset Encounter": ["Talk to Joshuca in Saug Swamp.", "Go to Capital City Sofya.", "Touch the crystal.", "Talk to Vores the Blacksmith.", "Talk to Pino.", "Talk to Dyron the Blacksmith in Fort Bailune.", "Return to the crystal.", "Go to Sofya City: Blacksmith.", "Collect 10 Colon Chaff and 10 Shell Shards.", "Return to Diego.", "Go to Eero Islands.", "Defeat 5 Corlobs (Lv370).", "Defeat Cordal (Lv398)."],
+  "Suspicious People and The Girl of Light": ["Talk to Licht in Eero Islands.", "Collect 5 Secret Sources and 10 Muddy Crystals.", "Return to Licht.", "Go to Drafty Cavern: Cliffs of Briller.", "Defeat Allies of Justice (Lv374).", "Defeat Jenya.", "Go to Sofya City: Blacksmith."],
+  "Flower Girl of Sunshine": ["Talk to Licht in Sofya City.", "Talk to Sauro in Sofya City: Blacksmith.", "Talk to Soldier.", "Return to Sofya City: Blacksmith.", "Go to Starlight Mountain Pass.", "Defeat 3 Wind Dragonlings (Lv376).", "Go to Starfall Road.", "Touch the crystal.", "Collect 5 Sturdy Stems and 10 Big Petals.", "Return to Seeda.", "Go to Starlight Mountain Pass.", "Defeat Eilena (Lv400)."],
+  "Children of the Sky": ["Talk to Eilena.", "Go to Great Tree Cloister.", "Defeat Blauzen (Lv401).", "Return to Starlight Mountain Pass: Rolba Forest.", "Defeat Vicdart Δ (Lv385)."],
+  "Priestess of Water": ["Talk to Cell in Starlight Mountain Pass: Rolba Forest.", "Go to Zalm Desert.", "Touch the crystal.", "Talk to Isuza.", "Talk to Vafardo in Capital City Elban: The Research Institute.", "Return to the crystal.", "Go to Zalm Lakeside.", "Defeat Eisen (Lv402).", "Talk to Minelo in Zalm Lakeside: Deepest Part.", "Go to Starlight Mountain Pass from Zalm Lakeside.", "Collect 10 Kijimu Thorn and 10 Big Petals.", "Return to Minelo."],
+  "The Maiden's Captured Breath": ["Go to Zalm Lakeside: Shrine of the Chalice.", "Go to Zalm Lakeside: Deepest Part from Zalm Lakeside: Shrine of the Chalice.", "Defeat 5 Oritius Soldiers (Lv400)."],
+  "Vow of Sand": ["Go to Zalm Desert.", "Go to Capital City Saterica: President's Office.", "Go to Lede Salt Lake.", "Defeat 3 Agoracanths (Lv200).", "Return to the crystal.", "Go to Sigmy Abandoned Tunnel.", "Defeat 3 Soldiers (Lv372)."],
+  "Brigand Hunt": ["Go to Zalm Desert.", "Talk to Sitara in Kleya City.", "Go to Geist Village.", "Touch the crystal.", "Talk to Kagan in Maios.", "Return to the crystal.", "Defeat 3 Thieves (Lv372)."],
+  "Garden in a Dream": ["Go to Geist Village.", "Talk to Sitara.", "Go to Ruins of Elium.", "Touch the crystal.", "Return to Sitara.", "Talk to Delma at Fort Slebinus: Area 1.", "Talk to Fenel the Merchant in Port Spargas.", "Return to the crystal.", "Go to Ferno Meadow.", "Defeat Zant (Lv404)."],
+  "Savior": ["Talk to Maisie in Elium Village.", "Go to Shrine of Baal.", "Defeat Cottonello (Lv405).", "Go to Ferno Meadow.", "Defeat Satyr (Lv380) or Marte (Lv380)."],
+  "God": ["Talk to Joshuca in Ferno Meadow.", "Go to Capital City Elban.", "Touch the crystal.", "Go to Deeos Village.", "Talk to Malti.", "Kill 5 Ice Moths and 5 Lamuccas.", "Return to Malti.", "Return to Capital City Elban.", "Touch the crystal.", "Go to Schole Church.", "Talk to Malti in Schole Town.", "Go to Shrine of Heaven.", "Defeat Anubites (Lv406)."],
+  "The Fruit of Wisdom": ["Talk to Cell in Shrine of Heaven: Chamber of Heaven.", "Go to Altered Space.", "Defeat Horutes (Lv407).", "Escape Altered Space."],
+  "Queen of the Fortress": ["Go to Capital City Elban.", "Go to Capital City Saterica.", "Touch the crystal.", "Touch the crystal again.", "Go to Golden Sands of Avarice: Area 2.", "Go to Fort Saterica: Drill Area.", "Defeat Altier (Lv378)."],
+  "Goddess Beads": ["Talk to Ally of Justice in Fort Saterica: Drill Area.", "Go to Battlefield.", "Defeat Eclaire (Lv409).", "Go to Battlefield: Frontline.", "Defeat Einsam (Lv410)."],
+  "Resolution": ["Talk to Joshuca in Capital City Saterica.", "Enter the memory in Ronfa Mountains.", "Follow Keltoi in Hall of Knowledge.", "Go to Golden Sands of Avarice from Fort Saterica.", "Defeat 3 Ally of Justice (Lv400).", "Talk to Inje Villager.", "Defeat Finstern (Lv411)."],
+  "Entrusting Hope": ["Talk to Joshuca in Ronfa Mountains.", "Talk to Joshuca in Capital City Sofya.", "Talk to Joshuca again and enter the memory.", "Go to Keikoku Mountains and collect Heat-producing stone.", "Go to Eero Islands and collect Light-producing ore.", "Go to Drafty Cavern: Cliffs of Brillar and talk to Sauro.", "Enter the Rift.", "Defeat Sauro (Lv412)."],
+  "The Dark Domain": ["Talk to Joshuca in Capital City Sofya.", "Go to Lunite Village and talk to Joshuca.", "Talk to Joshuca again and enter the memory.", "Go to Naraka Grotto Gate.", "Go to Eero Islands and collect Goddess Bead.", "Go to Dark Abyss.", "Defeat Flame Warrior Lipka (Lv411) and Ice Warrior Barafu (Lv411)."],
+  "Birth": ["Talk to Barafu and Lipka in Dark Abyss: Dark Garden.", "Go to Garden of Beginnings.", "Defeat Vatendeth (Lv418)."],
+};
+
+// Quests requiring item collection from mob drops
+const FARM_ITEMS = {
+  "Supply Route Shadows":                ["1x Colon Bag (from Colon)"],
+  "The Place of Darkness":               ["1x Blue Stone","1x Glowing Dust","1x Living Statue"],
+  "A Witch's Honor":                     ["1x Mythril","1x Jewel Steel","1x Weaponsmith Book","2x Bead Fragments","10x Glowing Feathers","1x Gold Fragment"],
+  "The Dragonewts' Secret":              ["30x Red Wax"],
+  "Mutated Predators":                   ["3x Dirty Gears","10x Hot Rockshards","20x Jet Black Liquids","2x Large Needles"],
+  "Apostolia and the God's Fragments":   ["5x ML Crysta"],
+  "The God's Fragments and Gido's Small Box": ["2x Flexible Shells","1x Mysterious Bark","3x Bear Fangs","1x Orichalcum"],
+  "The God's Fragments and Dragon Priestess": ["5x Mythril"],
+  "The Lograth Rebellion":               ["1x Rubellite","1x Crimson Pebble","1x Spiny Vine","1x High Ent Wood"],
+  "The Palace of Greed and Monster Field": ["2x Benitoite","5x Familiar's Furs","15x Hard Claws"],
+  "The Broken Clay Doll":                ["10x Beef","10x Eggs","10x Milk","10x Mushroom Stipe"],
+  "In the Sunken Town":                  ["10x Angelica Acutiloba"],
+  "The Tender Lie and Witch's Lamps":    ["3x Edged Horns","3x Spirit Frost Crystals","20x Fine-Flaked Snow","1x Unextinguishable Spark","3x Fire Crocodile Oils","5x Quartz"],
+  "The Collapsing Dream":                ["5x Pearls"],
+  "Chaos Mixture":                       ["3x Medical Herbs","3x Underwater Flowers"],
+  "A Witch's Desire":                    ["3x Secret Source"],
+  "Suspicious People and The Girl of Light": ["5x Secret Source","10x Muddy Crystals"],
+  "Flower Girl of Sunshine":             ["5x Sturdy Stems","10x Big Petals"],
+  "Star Child and Moonlight Beast":      ["10x Underwater Flowers","10x Big Wings"],
+  "Priestess of Water":                  ["10x Kijimu Thorn","10x Big Petals"],
+};
+
+// Quests requiring killing specific mobs
+const SLAY_ITEMS = {
+  "Monster Taskforce":   ["2x Colon","2x Brosch","2x Mooth"],
+  "Formless Being":      ["5x Dragnof","5x Giant Gamma Boulder","5x Goblin Rider","5x Chiro"],
+  "The Underground Town and Monsters' Den": ["15x Death Ent","15x Magic Soldier"],
+  "God":                 ["5x Ice Moth","5x Lamucca"],
+};
+
+let selectedQuestGi = null;
+
+function filterQuests(){
+  const name = document.getElementById('qNameInput').value.toLowerCase().trim();
+  const ep   = document.getElementById('qEpFilter').value;
+  renderQuestList(name, ep ? parseInt(ep) : null);
+}
+
+function renderQuestList(nameFilter, epFilter){
+  const container = document.getElementById('questList');
+
+  const eps = epFilter ? [epFilter] : [1,2,3,4,5,6];
+  let html = '';
+  let anyResult = false;
+
+  eps.forEach(e => {
+    const qs = QUESTS.filter(q => q.ep === e && (!nameFilter || q.name.toLowerCase().includes(nameFilter)));
+    if(!qs.length) return;
+    anyResult = true;
+    const isOpen = nameFilter || !!epFilter; // auto-open when filtering
+    html += `<div class="ep-group">
+      <div class="ep-group-header" onclick="toggleEp(${e},this)" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+        <span>EPISODE ${e}</span>
+        <span class="ep-chev" style="font-size:11px;color:var(--text-muted)">${isOpen?'▾':'▸'}</span>
+      </div>
+      <div class="ep-quests" id="ep-${e}" style="display:${isOpen?'block':'none'}">`;
+    qs.forEach(q => {
+      const gi = globalIdx(q);
+      const sel = gi === selectedQuestGi ? ' selected' : '';
+      const hasFarm = !!FARM_ITEMS[q.name];
+      const hasSlay = !!SLAY_ITEMS[q.name];
+      const hasObj = !!(QUEST_OBJ[q.name] && QUEST_OBJ[q.name].length);
+      const farmBadge = hasFarm ? `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--amber);background:rgba(232,168,48,0.1);border:1px solid rgba(232,168,48,0.3);border-radius:2px;padding:1px 5px;margin-left:6px;flex-shrink:0">FARM</span>` : '';
+      const slayBadge = hasSlay ? `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.3);border-radius:2px;padding:1px 5px;margin-left:6px;flex-shrink:0">SLAY</span>` : '';
+      const chevron = hasObj ? `<span style="font-size:10px;color:var(--text-muted);margin-left:4px;flex-shrink:0" class="chev-${gi}">▸</span>` : '';
+      const farmList = FARM_ITEMS[q.name] || [];
+      const slayList = SLAY_ITEMS[q.name] || [];
+      const objHtml = hasObj ? QUEST_OBJ[q.name].map(s => {
+        const isFarm = farmList.some(f => s.toLowerCase().includes(f.replace(/^\d+x\s*/i,'').toLowerCase().split(' ')[0]));
+        const isSlay = slayList.some(f => s.toLowerCase().includes(f.replace(/^\d+x\s*/i,'').toLowerCase().split(' ')[0]));
+        const tag = isFarm
+          ? `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--amber);background:rgba(232,168,48,0.1);border:1px solid rgba(232,168,48,0.3);border-radius:2px;padding:1px 5px;margin-left:6px;flex-shrink:0">FARM</span>`
+          : isSlay
+          ? `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.3);border-radius:2px;padding:1px 5px;margin-left:6px;flex-shrink:0">SLAY</span>`
+          : '';
+        const dot = isFarm ? `<span class="quest-obj-dot" style="color:var(--amber)">›</span>`
+                   : isSlay ? `<span class="quest-obj-dot" style="color:var(--red)">›</span>`
+                   : `<span class="quest-obj-dot">›</span>`;
+        return `<div class="quest-obj-step">${dot}<span style="flex:1">${s}</span>${tag}</div>`;
+      }).join('') : '';
+      const objOpen = gi === selectedQuestGi && hasObj ? ' open' : '';
+      html += `<div class="quest-item${sel}" onclick="toggleQuest(${gi},event)">
+        <span class="quest-num">${q.idx+1}</span>
+        <span style="flex:1">${q.name}</span>${farmBadge}${slayBadge}${chevron}
+      </div>
+      ${hasObj ? `<div class="quest-objectives${objOpen}" id="obj-${gi}">${objHtml}</div>` : ''}`;
+    });
+    html += `</div></div>`;
+  });
+
+  if(!anyResult) html = `<p class="not-found">No quests found.</p>`;
+  container.innerHTML = html;
+}
+
+function toggleEp(e, headerEl){
+  const content = document.getElementById('ep-'+e);
+  const chev = headerEl.querySelector('.ep-chev');
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  chev.textContent = isOpen ? '▸' : '▾';
+}
+
+function toggleQuest(gi, event){
+  const objEl = document.getElementById('obj-'+gi);
+  if(objEl){
+    const isOpen = objEl.classList.contains('open');
+    objEl.classList.toggle('open', !isOpen);
+    const chev = document.querySelector('.chev-'+gi);
+    if(chev) chev.textContent = isOpen ? '▸' : '▾';
+  }
+  selectedQuestGi = gi;
+  const q = QUESTS.find(q => globalIdx(q) === gi);
+  if(q) renderResult(q);
+  document.querySelectorAll('.quest-item').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function mBar(pct,cls,label,done){
+  const right=done?`<span class="done-tag">UNLOCKED</span>`:`<span class="bar-pct">${pct}%</span>`;
+  return `<div class="bar-top"><span class="bar-lbl">${label}</span>${right}</div>
+  <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>`;
+}
+function renderResult(q){
+  const gi=globalIdx(q);
+  const overall=Math.round((gi/TOTAL_GLOBAL)*100);
+  const aPct=Math.min(100,Math.round((gi/APOSTOLIA_G)*100));
+  const sPct=Math.min(100,Math.round((gi/SPECIA_G)*100));
+  const aDone=gi>=APOSTOLIA_G, sDone=gi>=SPECIA_G;
+  const epDone=q.idx+1, epTotal=EP_TOTALS[q.ep], rem=epTotal-epDone;
+  const epQ=QUESTS.filter(x=>x.ep===q.ep).sort((a,b)=>a.idx-b.idx);
+  const pos=epQ.findIndex(x=>x.idx===q.idx);
+  let nextQ=null;
+  if(pos<epQ.length-1) nextQ=epQ[pos+1];
+  else{const n=QUESTS.filter(x=>x.ep===q.ep+1).sort((a,b)=>a.idx-b.idx);if(n.length)nextQ=n[0];}
+
+  // Update milestones panel
+  document.getElementById('milestoneContent').innerHTML=`
+    <div class="bar-section">
+      ${mBar(aPct,'fill-purple','Unlock Apostalia — Kill Irai (Ep 3)',aDone)}
+      ${aDone?'':`<div class="bar-away">${APOSTOLIA_G-gi} quest${APOSTOLIA_G-gi!==1?'s':''} away</div>`}
+    </div>
+    <div class="bar-section">
+      ${mBar(sPct,'fill-amber',"Earn Specia's Blessed Stone (Ep 6)",sDone)}
+      ${sDone?'':`<div class="bar-away">${SPECIA_G-gi} quest${SPECIA_G-gi!==1?'s':''} away</div>`}
+    </div>`;
+
+  // Update quest info panel
+  document.getElementById('qResult').innerHTML=`
+  <div class="panel">
+    <div class="panel-header">EPISODE ${q.ep} &nbsp;·&nbsp; QUEST ${epDone} / ${epTotal}</div>
+    <div style="padding:10px 14px 8px;border-bottom:1px solid rgba(0,200,255,0.08)">
+      <div style="font-size:10px;color:var(--text-muted);letter-spacing:0.08em;margin-bottom:4px">CURRENT QUEST</div>
+      <div style="font-size:15px;color:#fff;line-height:1.35;font-family:'Cinzel',serif;text-shadow:var(--neon-glow-sm)">${q.name}</div>
+    </div>
+    ${nextQ?`<div class="q-next">
+      <span class="q-next-arrow">›</span>
+      <div><span class="q-next-lbl">NEXT QUEST</span>
+      <span class="q-next-name">${nextQ.name}${nextQ.ep!==q.ep?`<span class="ep-badge">EP ${nextQ.ep}</span>`:''}</span></div>
+    </div>`:''}
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-n">${epDone}</div><div class="stat-l">DONE EP${q.ep}</div></div>
+      <div class="stat-box"><div class="stat-n">${rem}</div><div class="stat-l">LEFT EP${q.ep}</div></div>
+      <div class="stat-box"><div class="stat-n">${overall}%</div><div class="stat-l">OVERALL</div></div>
+    </div>
+  </div>`;
+}
+
+// ── GRIND TAB ─────────────────────────────────────────────────
+
+function getCookieMobs(){
+  try{
+    const c=document.cookie.split(';').find(s=>s.trim().startsWith('iruna_mobs='));
+    return c ? JSON.parse(decodeURIComponent(c.trim().slice(11))) : [];
+  }catch{return [];}
+}
+function saveCookieMobs(mobs){
+  const exp=new Date(); exp.setFullYear(exp.getFullYear()+1);
+  document.cookie=`iruna_mobs=${encodeURIComponent(JSON.stringify(mobs))};expires=${exp.toUTCString()};path=/`;
+}
+
+function saveMob(){
+  const name=document.getElementById('mobName').value.trim();
+  const exp=parseInt(document.getElementById('mobExp').value)||0;
+  if(!name||!exp) return;
+  const mobs=getCookieMobs();
+  const existing=mobs.findIndex(m=>m.name.toLowerCase()===name.toLowerCase());
+  if(existing>=0) mobs[existing].exp=exp;
+  else mobs.push({name,exp});
+  saveCookieMobs(mobs);
+  renderSavedMobs();
+  calcGrind();
+}
+
+function loadMob(name,exp){
+  document.getElementById('mobName').value=name;
+  document.getElementById('mobExp').value=exp;
+  calcGrind();
+}
+
+function deleteMob(name){
+  const mobs=getCookieMobs().filter(m=>m.name!==name);
+  saveCookieMobs(mobs);
+  // If the deleted mob is currently loaded in the inputs, clear them
+  const currentName=document.getElementById('mobName').value.trim();
+  if(currentName.toLowerCase()===name.toLowerCase()){
+    document.getElementById('mobName').value='';
+    document.getElementById('mobExp').value='';
+    document.getElementById('grindResult').classList.add('result-hidden');
+  }
+  renderSavedMobs();
+}
+
+function renderSavedMobs(){
+  const mobs=getCookieMobs();
+  const panel=document.getElementById('savedMobsPanel');
+  const list=document.getElementById('savedMobsList');
+  if(!mobs.length){panel.style.display='none';return;}
+  panel.style.display='block';
+  list.innerHTML=mobs.map(m=>`
+    <div class="row" style="cursor:pointer" onclick="loadMob(${JSON.stringify(m.name)},${m.exp})">
+      <div class="row-label" style="color:var(--text)">${m.name}</div>
+      <div style="flex:1;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--neon)">${fmt(m.exp)} EXP</div>
+      <button onclick="(function(e){e.stopPropagation();e.preventDefault();deleteMob(${JSON.stringify(m.name)});})(event)" style="background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.3);border-radius:3px;color:var(--red);padding:4px 10px;font-family:'Cinzel',serif;font-size:10px;cursor:pointer;margin-right:10px;flex-shrink:0">DEL</button>
+    </div>`).join('');
+}
+
+function nudgeKpm(d){
+  const el=document.getElementById('killsPerMin');
+  const v=Math.max(0,Math.min(300,parseInt(el.value||0)+d));
+  el.value=v;
+  document.getElementById('kpmDisplay').textContent=v;
+  calcGrind();
+}
+function onKpmSlide(){ nudgeKpm(0); }
+
+function calcGrind(){
+  const mobExp=parseInt(document.getElementById('mobExp').value)||0;
+  const kpm=parseInt(document.getElementById('killsPerMin').value)||0;
+  const mobName=document.getElementById('mobName').value.trim();
+  const resEl=document.getElementById('grindResult');
+
+  if(!mobExp||!kpm){resEl.classList.add('result-hidden');return;}
+
+  const expMin=mobExp*kpm;
+  const expHour=expMin*60;
+  const expDay=expHour*8;
+
+  document.getElementById('expPerMin').textContent=fmt(expMin);
+  document.getElementById('expPerHour').textContent=fmt(expHour);
+  document.getElementById('expPerDay').textContent=fmt(expDay);
+  document.getElementById('grindMobHeader').textContent=mobName?`RESULTS — ${mobName.toUpperCase()}`:'RESULTS';
+
+  resEl.classList.remove('result-hidden');
+}
+
+// Load saved mob on start if any
+window.addEventListener('DOMContentLoaded',()=>{
+  renderQuestList(null, null);
+  renderSavedMobs();
+  const mobs=getCookieMobs();
+  if(mobs.length){
+    document.getElementById('mobName').value=mobs[mobs.length-1].name;
+    document.getElementById('mobExp').value=mobs[mobs.length-1].exp;
+  }
+});
+</script>
+
+<div style="text-align:center;padding:1.5rem 0 1rem;margin-top:0.5rem">
+  <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.06em;opacity:0.6">crafted by <span style="color:var(--neon-dim)">AxiomE</span></div>
+</div>
+
+</body>
+</html>
